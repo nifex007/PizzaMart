@@ -108,7 +108,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
+AUTH_USER_MODEL = 'customers.Customer'
 # Internationalization
 # https://docs.djangoproject.com/en/3.2/topics/i18n/
 
