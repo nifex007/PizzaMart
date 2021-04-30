@@ -32,6 +32,9 @@ class Order(models.Model):
 
     def is_delivered(self):
         return self.order_status == 'DELIVERED'
+
+    def __str__(self):
+        return '{} - {} - {}'.format(self.flavour, self.count, self.order_status) 
     
 
     
