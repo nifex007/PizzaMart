@@ -27,7 +27,7 @@ class Order(models.Model):
     count = models.IntegerField(default=1, blank=False, null=False)
     order_status = models.CharField(max_length=10, choices=ORDER_STATUSES)
     order_date = models.DateTimeField(auto_now_add=True)
-    delivery_date = models.DateTimeField()
+    delivery_date = models.DateTimeField(blank=True, null=True)
     
 
     def is_delivered(self):

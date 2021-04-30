@@ -15,12 +15,19 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from customers.router import router as customer_router
-from pizza_orders.router import router as read_order_router
+from rest_framework import routers
+from customers.views import CustomerViewSet
+from pizza_orders.views import OrderReadOnlyViewSet
+
+
+main_router = routers.DefaultRouter()
+
+main_router.register(r'customers', CustomerViewSet, basename='customer')
+main_router.register(r'orders', OrderReadOnlyViewSet, basename='read_order')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/', include(read_order_router.urls)),
-    path('api/', include(customer_router.urls)),
+    path('api/', include(main_router.urls)),
+    
     
 ]

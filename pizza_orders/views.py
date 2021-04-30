@@ -6,7 +6,7 @@ from pizza_orders.serializers import OrderSerializer
 # Create your views here.
 class OrderReadOnlyViewSet(viewsets.ReadOnlyModelViewSet):
     """
-    A simple ViewSet for viewing accounts.
+    A simple ViewSet for viewing Orders.
     """
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
