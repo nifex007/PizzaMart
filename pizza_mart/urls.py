@@ -17,13 +17,14 @@ from django.contrib import admin
 from django.urls import path, include
 from rest_framework import routers
 from customers.views import CustomerViewSet
-from pizza_orders.views import OrderReadOnlyViewSet
+from pizza_orders.views import OrderReadOnlyViewSet, OrderViewSet
 
 
 main_router = routers.DefaultRouter()
 
 main_router.register(r'customers', CustomerViewSet, basename='customer')
-main_router.register(r'orders', OrderReadOnlyViewSet, basename='read_order')
+main_router.register(r'orders_read', OrderReadOnlyViewSet, basename='read_order')
+main_router.register(r'orders', OrderViewSet, basename='order')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
