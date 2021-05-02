@@ -11,6 +11,7 @@ from rest_framework import status
 from django_filters.rest_framework import DjangoFilterBackend
 from django.utils import timezone
 from pizza_mart.utils import Pagination
+from rest_framework.decorators import action
 
 # Create your views here.
 class OrderReadOnlyViewSet(viewsets.ReadOnlyModelViewSet):
@@ -80,6 +81,13 @@ class OrderViewSet(viewsets.ViewSet):
                 serializer.save()
                 return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    @action(detail=True, methods=['get'])
+    def status(self, request, pk=None):
+        order = self.get_object(pk)
+        
+        return Response({'message': True})
+
     
 
 
