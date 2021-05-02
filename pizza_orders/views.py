@@ -10,6 +10,7 @@ from django.http import Http404
 from rest_framework import status
 from django_filters.rest_framework import DjangoFilterBackend
 from django.utils import timezone
+from pizza_mart.utils import Pagination
 
 # Create your views here.
 class OrderReadOnlyViewSet(viewsets.ReadOnlyModelViewSet):
@@ -20,6 +21,7 @@ class OrderReadOnlyViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = OrderSerializer
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['order_status', 'customer']
+    pagination_class = Pagination
 
 
 class OrderViewSet(viewsets.ViewSet):
