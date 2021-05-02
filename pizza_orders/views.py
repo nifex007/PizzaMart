@@ -51,11 +51,13 @@ class OrderViewSet(viewsets.ViewSet):
             # prevent update when pizza is delivered
             if order.is_delivered():
                 return Response({'message': 'Pizza already delivered to {} at {}'. format(order.customer.full_name, order.customer.address)}, status=status.HTTP_400_BAD_REQUEST)
+            # update delivery date when order is delivered 
             elif request.data.get('order_status', None) == 'DELIVERED': 
                 serializer.save()
                 order.delivery_date = timezone.now()
                 order.save()
                 return Response(serializer.data)
+            # other updates having nothing to do with delivery
             else:
                 serializer.save()
                 return Response(serializer.data)
@@ -65,8 +67,16 @@ class OrderViewSet(viewsets.ViewSet):
         order = self.get_object(pk)
         serializer = self.serializer_class(order, data=request.data, partial=True)
         if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
+            if order.is_delivered():
+                return Response({'message': 'Pizza already delivered to {} at {}'. format(order.customer.full_name, order.customer.address)}, status=status.HTTP_400_BAD_REQUEST)
+            elif request.data.get('order_status', None) == 'DELIVERED': 
+                serializer.save()
+                order.delivery_date = timezone.now()
+                order.save()
+                return Response(serializer.data)
+            else:
+                serializer.save()
+                return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
 
