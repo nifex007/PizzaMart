@@ -67,3 +67,7 @@ Go to  `http://0.0.0.0:8000/`
 
 ### Documentation
 https://documenter.getpostman.com/view/10026788/TzRNDpAV
+
+
+# Tests
+`sudo docker-compose run web python manage.py test`
