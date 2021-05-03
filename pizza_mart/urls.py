@@ -17,6 +17,7 @@ from django.contrib import admin
 from django.urls import path, include
 from rest_framework import routers
 from customers.views import CustomerViewSet
+from pizza_mart.views import index
 from pizza_orders.views import OrderReadOnlyViewSet, OrderViewSet
 
 
@@ -27,6 +28,7 @@ main_router.register(r'orders_read', OrderReadOnlyViewSet, basename='read_order'
 main_router.register(r'orders', OrderViewSet, basename='order')
 
 urlpatterns = [
+    path('', index, name='index'),
     path('admin/', admin.site.urls),
     path('api/', include(main_router.urls)),
     
