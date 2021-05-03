@@ -45,7 +45,7 @@ class OrderViewSet(viewsets.ViewSet):
         except ValidationError as error:
             return Response({'code': status.HTTP_400_BAD_REQUEST, 'error': error.detail}, status=status.HTTP_400_BAD_REQUEST)
         serializer.save()
-        return Response(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def update(self, request, pk=None):
         order = self.get_object(pk)
