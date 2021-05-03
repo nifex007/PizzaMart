@@ -47,6 +47,8 @@ This assumes you have docker installed. Run the commands in your terminal where 
 
 Go to  `http://0.0.0.0:8000/`
 
+
+
 ### API 
 | Function                                   | Request| Command                 |
 | ------------------------------------------ | -------| ------------------------|
@@ -60,3 +62,8 @@ Go to  `http://0.0.0.0:8000/`
 | `/api/orders_read/`                        |`GET`   | List Orders             |
 | `/api/orders_read/?customer=<int:order_id>&order_status=<STATUS>`|`GET`   | Sort Orders|
 | `/api/orders_read/<int:order_id>/`             |`GET`   | Get Order by id|
+
+<br>
+
+### Documentation
+https://documenter.getpostman.com/view/10026788/TzRNDpAV
