@@ -1,9 +1,8 @@
 # PizzaMart
 
 ## Description
-Pizza ordering services
+A simple Pizza ordering service
 
-Pizza order mangement
 ### Functions 
 * Order pizzas:
 	* It should be possible to specify the desired flavors of pizza (margarita, marinara, salami), the number of pizzas and their size (small, medium, large).
