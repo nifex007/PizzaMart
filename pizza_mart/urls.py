@@ -23,9 +23,9 @@ from pizza_orders.views import OrderReadOnlyViewSet, OrderViewSet
 
 main_router = routers.DefaultRouter()
 
-main_router.register(r'customers', CustomerViewSet, basename='customer')
-main_router.register(r'orders_read', OrderReadOnlyViewSet, basename='read_order')
-main_router.register(r'orders', OrderViewSet, basename='order')
+main_router.register(r'customers/?', CustomerViewSet, basename='customer')
+main_router.register(r'orders_read/?', OrderReadOnlyViewSet, basename='read_order')
+main_router.register(r'orders/?', OrderViewSet, basename='order')
 
 urlpatterns = [
     path('', index, name='index'),
