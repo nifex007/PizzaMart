@@ -38,7 +38,7 @@ export POSTGRES_PASSWORD=postgres
 
 ### SET UP APP
 
-This assumes you have docker installed. Run the commands in your terminal where `Dockerfile` and `docker-compose.yml` can be found
+This assumes you have docker installed. <br>Run these commands below in your terminal in the directory where `Dockerfile` and `docker-compose.yml` can be found.
 
 `source .env`
 
