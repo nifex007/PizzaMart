@@ -21,11 +21,6 @@ A simple Pizza ordering service
 	* Allow filtering by status / customer.
 
 
-
-
-### Documentation
-https://documenter.getpostman.com/view/10026788/TzCV45QS
-
 <br>
 
 ### SET ENV VARIABLES
