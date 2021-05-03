@@ -23,7 +23,7 @@ A simple Pizza ordering service
 
 <br>
 
-### SET ENV VARIABLES
+### SET DATABSE ENV VARIABLES
 .env
 ```
 export POSTGRES_DB=postgres
@@ -35,12 +35,18 @@ export POSTGRES_PASSWORD=postgres
 
 This assumes you have docker installed. <br>Run these commands below in your terminal in the directory where `Dockerfile` and `docker-compose.yml` can be found.
 
+`cd PizzaMart`
+
+`virtuanlenv venv`
+
+`source venv/bin/activate`
+
 `source .env`
 
 `docker-compose up --build`
 
-Go to  `http://0.0.0.0:8000/`
 
+Go to  `http://0.0.0.0:8000/`
 
 
 ### API 
