@@ -82,11 +82,21 @@ class OrderViewSet(viewsets.ViewSet):
                 return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    def destroy(self, request, pk=None):
+        order = self.get_object(pk)
+        order.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
     @action(detail=True, methods=['get'])
     def status(self, request, pk=None):
         order = self.get_object(pk)
         
-        return Response({'message': True})
+        order_status = {
+            "order_id": order.id,
+            "order_destination": order.customer.address,
+            "order_status": order.order_status,
+        }
+        return Response(order_status)
 
     
 
