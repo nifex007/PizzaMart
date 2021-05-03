@@ -1,6 +1,5 @@
 from django.db import models
 from customers.models import Customer
-from model_utils import FieldTracker
 
 
 # Create your models here.
@@ -30,8 +29,6 @@ class Order(models.Model):
     order_status = models.CharField(default='RECIEVED', max_length=10, choices=ORDER_STATUSES)
     order_date = models.DateTimeField(auto_now_add=True)
     delivery_date = models.DateTimeField(blank=True, null=True)
-
-    tracker = FieldTracker()
     
 
     def is_delivered(self):
@@ -39,4 +36,3 @@ class Order(models.Model):
 
     def __str__(self):
         return '{} - {} - {}'.format(self.flavour, self.count, self.order_status) 
-    
