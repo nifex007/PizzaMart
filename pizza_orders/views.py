@@ -1,8 +1,6 @@
-from django.shortcuts import render
 from rest_framework import viewsets
 from pizza_orders.models import Order
 from pizza_orders.serializers import OrderSerializer, OrderCreateSerializer
-from rest_framework import filters
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
@@ -13,6 +11,7 @@ from django.utils import timezone
 from pizza_mart.utils import Pagination
 from rest_framework.decorators import action
 from django.shortcuts import redirect
+import json
 
 
 # Create your views here.
@@ -40,14 +39,40 @@ class OrderViewSet(viewsets.ModelViewSet):
             raise Http404
 
     def create(self, request, *args, **kwargs):
-        try:
-            serializer = OrderCreateSerializer(data=request.data)
-            serializer.is_valid(raise_exception=True)
-        except ValidationError as error:
-            return Response({'code': status.HTTP_400_BAD_REQUEST, 'error': error.detail},
-                            status=status.HTTP_400_BAD_REQUEST)
-        serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        order_payload = request.data
+        sizes = order_payload.get('sizes', None)
+        if sizes:
+            if type(sizes) is not list:
+                return Response({'message': 'sizes should be a list'},
+                                status=status.HTTP_400_BAD_REQUEST)
+            response_data = []
+            for size_count in sizes:
+                size = size_count.get('size', None)
+                count = size_count.get('count', None)
+                if size is None or count is None:
+                    return Response({'message': 'No value for size or count'},
+                                    status=status.HTTP_400_BAD_REQUEST)
+                data = {
+                    "customer": order_payload['customer'],
+                    "flavour": order_payload['flavour'],
+                    "size": size,
+                    "count": count
+                }
+                serializer = OrderCreateSerializer(data=data)
+                serializer.is_valid(raise_exception=True)
+                self.perform_create(serializer)
+                response_data.append(serializer.data)
+
+            return Response(response_data, status=status.HTTP_201_CREATED)
+        else:
+            try:
+                serializer = OrderCreateSerializer(data=request.data)
+                serializer.is_valid(raise_exception=True)
+            except ValidationError as error:
+                return Response({'message': error.detail},
+                                status=status.HTTP_400_BAD_REQUEST)
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def retrieve(self, request, pk=None):
         queryset = Order.objects.all()
