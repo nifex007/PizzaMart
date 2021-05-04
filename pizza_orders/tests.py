@@ -37,15 +37,15 @@ class TestOrderView(TestCase):
         }
 
     def test_get_orders(self):
-        response = self.client.get(reverse('read_order-list'))
+        response = self.client.get(reverse('orders-list'))
         self.assertEquals(response.status_code, status.HTTP_200_OK)
 
     def test_single_order_by_id(self):
-        response = self.client.get(reverse('read_order-detail', args=[self.order.id]))
+        response = self.client.get(reverse('order-detail', args=[self.order.id]))
         self.assertEquals(response.status_code, status.HTTP_200_OK)
 
     def test_single_order_by_id_NOT_FOUND(self):
-        response = self.client.get(reverse('read_order-detail', args=[1000]))
+        response = self.client.get(reverse('order-detail', args=[1000]))
         self.assertEquals(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_add_order(self):
@@ -92,7 +92,7 @@ class TestOrderView(TestCase):
         response = self.client.delete(reverse('order-detail', args=[self.order.id]),
                                       content_type='application/json'
                                       )
-        check_order = self.client.get(reverse('read_order-detail', args=[self.order.id]))
+        check_order = self.client.get(reverse('order-detail', args=[self.order.id]))
         self.assertEquals(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertEquals(check_order.status_code, status.HTTP_404_NOT_FOUND)
 
