@@ -13,6 +13,7 @@ from django.utils import timezone
 from pizza_mart.utils import Pagination
 from rest_framework.decorators import action
 
+
 # Create your views here.
 class OrderReadOnlyViewSet(viewsets.ReadOnlyModelViewSet):
     """
@@ -31,19 +32,19 @@ class OrderViewSet(viewsets.ViewSet):
     """
     serializer_class = OrderSerializer
 
-
     def get_object(self, pk):
         try:
             return Order.objects.get(pk=pk)
         except Order.DoesNotExist:
             raise Http404
-   
+
     def create(self, request, *args, **kwargs):
         try:
             serializer = OrderCreateSerializer(data=request.data)
             serializer.is_valid(raise_exception=True)
         except ValidationError as error:
-            return Response({'code': status.HTTP_400_BAD_REQUEST, 'error': error.detail}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'code': status.HTTP_400_BAD_REQUEST, 'error': error.detail},
+                            status=status.HTTP_400_BAD_REQUEST)
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
@@ -53,9 +54,11 @@ class OrderViewSet(viewsets.ViewSet):
         if serializer.is_valid():
             # prevent update when pizza is delivered
             if order.is_delivered():
-                return Response({'message': 'Pizza already delivered to {} at {}'. format(order.customer.full_name, order.customer.address)}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({'message': 'Pizza already delivered to {} at {}'.format(order.customer.full_name,
+                                                                                         order.customer.address)},
+                                status=status.HTTP_400_BAD_REQUEST)
             # update delivery date when order is delivered 
-            elif request.data.get('order_status', None) == 'DELIVERED': 
+            elif request.data.get('order_status', None) == 'DELIVERED':
                 serializer.save()
                 order.delivery_date = timezone.now()
                 order.save()
@@ -71,8 +74,10 @@ class OrderViewSet(viewsets.ViewSet):
         serializer = self.serializer_class(order, data=request.data, partial=True)
         if serializer.is_valid():
             if order.is_delivered():
-                return Response({'message': 'Pizza already delivered to {} at {}'. format(order.customer.full_name, order.customer.address)}, status=status.HTTP_400_BAD_REQUEST)
-            elif request.data.get('order_status', None) == 'DELIVERED': 
+                return Response({'message': 'Pizza already delivered to {} at {}'.format(order.customer.full_name,
+                                                                                         order.customer.address)},
+                                status=status.HTTP_400_BAD_REQUEST)
+            elif request.data.get('order_status', None) == 'DELIVERED':
                 serializer.save()
                 order.delivery_date = timezone.now()
                 order.save()
@@ -90,18 +95,10 @@ class OrderViewSet(viewsets.ViewSet):
     @action(detail=True, methods=['get'])
     def status(self, request, pk=None):
         order = self.get_object(pk)
-        
+
         order_status = {
             "order_id": order.id,
             "order_destination": order.customer.address,
             "order_status": order.order_status,
         }
         return Response(order_status)
-
-    
-
-
-    
-
-
-

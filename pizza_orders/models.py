@@ -4,7 +4,6 @@ from customers.models import Customer
 
 # Create your models here.
 class Order(models.Model):
-
     PIZZA_FLAVOURS = [
         ('MARGARITA', 'margarita'),
         ('MARINARA', 'marinara'),
@@ -29,10 +28,9 @@ class Order(models.Model):
     order_status = models.CharField(default='RECIEVED', max_length=10, choices=ORDER_STATUSES)
     order_date = models.DateTimeField(auto_now_add=True)
     delivery_date = models.DateTimeField(blank=True, null=True)
-    
 
     def is_delivered(self):
         return self.delivery_date is not None
 
     def __str__(self):
-        return '{} - {} - {}'.format(self.flavour, self.count, self.order_status) 
+        return '{} - {} - {}'.format(self.flavour, self.count, self.order_status)
