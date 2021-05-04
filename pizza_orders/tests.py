@@ -97,7 +97,7 @@ class TestOrderView(TestCase):
         self.assertEquals(check_order.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_prevent_edit_of_delivered_order(self):
-        # used set order to delivered to match the criterial to be tested 
+        # used set order to delivered to match the criteria to be tested
         patch_payload = {
             "order_status": "DELIVERED"
         }
@@ -120,3 +120,105 @@ class TestOrderView(TestCase):
                                                                         self.order.customer.address)
         self.assertEquals(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEquals(response.data['message'], expected_message)
+
+    def test_prevent_edit_of_in_transit_order(self):
+        # used set order to in transit to match the criteria to be tested
+        patch_payload = {
+            "order_status": "TRANSIT"
+        }
+        self.client.patch(reverse('order-detail', args=[self.order.id]),
+                          data=json.dumps(patch_payload),
+                          content_type='application/json'
+                          )
+        # test case payload
+        put_payload = {
+            "flavour": "MARGARITA",
+            "size": "SMALL",
+            "count": 5
+        }
+        response = self.client.put(reverse('order-detail', args=[self.order.id]),
+                                   data=json.dumps(put_payload),
+                                   content_type='application/json'
+                                   )
+        expected_message = 'Pizza already in Transit to {} for {}'.format(self.order.customer.address,
+                                                                          self.order.customer.full_name
+                                                                          )
+        self.assertEquals(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEquals(response.data['message'], expected_message)
+
+    def test_prevent_partial_edit_of_in_transit_order(self):
+        # used set order to in transit to match the criteria to be tested
+        patch_payload = {
+            "order_status": "TRANSIT"
+        }
+
+        self.client.patch(reverse('order-detail', args=[self.order.id]),
+                          data=json.dumps(patch_payload),
+                          content_type='application/json'
+                          )
+        # test case payload
+        patch_payload = {
+            "flavour": "MARGARITA"
+        }
+        response = self.client.patch(reverse('order-detail', args=[self.order.id]),
+                                     data=json.dumps(patch_payload),
+                                     content_type='application/json'
+                                     )
+        expected_message = 'Pizza already in Transit to {} for {}'.format(self.order.customer.address,
+                                                                          self.order.customer.full_name
+                                                                          )
+        self.assertEquals(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEquals(response.data['message'], expected_message)
+
+    def test_allowing_only_changing_order_status_of_orders_in_transit(self):
+        # used set order to in transit to match the criteria to be tested
+        patch_payload = {
+            "order_status": "TRANSIT"
+        }
+        self.client.patch(reverse('order-detail', args=[self.order.id]),
+                          data=json.dumps(patch_payload),
+                          content_type='application/json'
+                          )
+        # test case payloads
+        patch_payload1 = {
+            "flavour": "MARGARITA"
+        }  # fail
+
+        patch_payload2 = {
+            "order_status": "RECIEVED",
+            "count": 1
+        }  # success | ignores count
+
+        patch_payload3 = {
+            "order_status": "DELIVERED",
+            "size": "LARGE"
+        }  # success | ignores size
+
+        response1 = self.client.patch(reverse('order-detail', args=[self.order.id]),
+                                      data=json.dumps(patch_payload1),
+                                      content_type='application/json'
+                                      )
+        expected_message1 = 'Pizza already in Transit to {} for {}'.format(self.order.customer.address,
+                                                                           self.order.customer.full_name
+                                                                           )
+
+        response2 = self.client.patch(reverse('order-detail', args=[self.order.id]),
+                                      data=json.dumps(patch_payload2),
+                                      content_type='application/json'
+                                      )
+
+        response3 = self.client.patch(reverse('order-detail', args=[self.order.id]),
+                                      data=json.dumps(patch_payload3),
+                                      content_type='application/json'
+                                      )
+
+        self.assertEquals(response1.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEquals(response1.data['message'], expected_message1)
+
+        self.assertEquals(response2.status_code, status.HTTP_200_OK)
+        self.assertEquals(response2.data['order_status'], 'RECIEVED')
+        self.assertEquals(response2.data['count'], self.order.count)
+
+        self.assertEquals(response3.status_code, status.HTTP_200_OK)
+        self.assertEquals(response3.data['order_status'], 'DELIVERED')
+        self.assertEquals(response3.data['size'], self.order.size)
