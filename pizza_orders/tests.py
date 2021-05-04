@@ -36,6 +36,25 @@ class TestOrderView(TestCase):
             "count": 2
         }
 
+        self.sample_multiple_orders_payload = {
+            "customer": self.customer.id,
+            "flavour": "MARGARITA",
+            "sizes": [
+                {
+                    "size": "SMALL",
+                    "count": 2
+                },
+                {
+                    "size": "LARGE",
+                    "count": 5
+                },
+                {
+                    "size": "MEDIUM",
+                    "count": 1
+                }
+            ]
+        }
+
     def test_get_orders(self):
         response = self.client.get(reverse('orders-list'))
         self.assertEquals(response.status_code, status.HTTP_200_OK)
@@ -56,6 +75,43 @@ class TestOrderView(TestCase):
                                     )
         self.assertEquals(response.status_code, status.HTTP_201_CREATED)
         self.assertEquals(response.data['flavour'], self.sample_order_payload['flavour'])
+
+    def test_add_multiple_orders_same_flavour_different_sizes(self):
+        response = self.client.post(reverse('order-list'),
+
+                                    data=json.dumps(self.sample_multiple_orders_payload),
+                                    content_type='application/json'
+                                    )
+        self.assertEquals(response.status_code, status.HTTP_201_CREATED)
+
+    def test_missing_size_or_count_for_multiple_orders(self):
+        # payload with missing size
+        missing_size_payload = {
+            "customer": self.customer.id,
+            "flavour": "MARGARITA",
+            "sizes": [
+                {
+                    "count": 2
+                },
+                {
+                    "size": "LARGE",
+                    "count": 5
+                },
+                {
+                    "size": "MEDIUM",
+                    "count": 1
+                }
+            ]
+
+        }
+
+        response = self.client.post(reverse('order-list'),
+
+                                    data=json.dumps(missing_size_payload),
+                                    content_type='application/json'
+                                    )
+        self.assertEquals(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEquals(response.data['message'], 'No value for size or count')
 
     def test_edit_order(self):
         payload = {
