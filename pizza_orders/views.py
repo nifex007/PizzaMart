@@ -64,13 +64,12 @@ class OrderViewSet(viewsets.ModelViewSet):
                 return Response({'message': 'Pizza already delivered to {} at {}'.format(order.customer.full_name,
                                                                                          order.customer.address)},
                                 status=status.HTTP_400_BAD_REQUEST)
-            # update delivery date when order is delivered 
-            elif request.data.get('order_status', None) == 'DELIVERED':
-                serializer.save()
-                order.delivery_date = timezone.now()
-                order.save()
-                return Response(serializer.data)
-            # other updates having nothing to do with delivery
+            # prevent update when pizza is in transit
+            elif order.is_in_transit():
+                return Response({'message': 'Pizza already in Transit to {} for {}'.format(order.customer.address,
+                                                                                           order.customer.full_name
+                                                                                           )},
+                                status=status.HTTP_400_BAD_REQUEST)
             else:
                 serializer.save()
                 return Response(serializer.data)
@@ -79,16 +78,30 @@ class OrderViewSet(viewsets.ModelViewSet):
     def partial_update(self, request, pk=None):
         order = self.get_object(pk)
         serializer = self.serializer_class(order, data=request.data, partial=True)
+
         if serializer.is_valid():
+            payload_order_status = request.data.get('order_status', None)
             if order.is_delivered():
                 return Response({'message': 'Pizza already delivered to {} at {}'.format(order.customer.full_name,
                                                                                          order.customer.address)},
                                 status=status.HTTP_400_BAD_REQUEST)
-            elif request.data.get('order_status', None) == 'DELIVERED':
-                serializer.save()
-                order.delivery_date = timezone.now()
-                order.save()
-                return Response(serializer.data)
+
+            elif order.is_in_transit() and payload_order_status is not None:
+                # allow update only on order_status field
+                delivered_status = {"order_status": payload_order_status}
+                serializer_ = self.serializer_class(order, data=delivered_status, partial=True)
+                if serializer_.is_valid():
+                    serializer_.save()
+                    order.delivery_date = timezone.now()
+                    order.save()
+                    return Response(serializer.data)
+                return Response(serializer_.errors, status=status.HTTP_400_BAD_REQUEST)
+
+            elif order.is_in_transit() and payload_order_status is None:
+                return Response({'message': 'Pizza already in Transit to {} for {}'
+                                .format(order.customer.address, order.customer.full_name)},
+                                status=status.HTTP_400_BAD_REQUEST)
+
             else:
                 serializer.save()
                 return Response(serializer.data)
