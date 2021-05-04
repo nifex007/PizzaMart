@@ -53,15 +53,12 @@ Go to  `http://0.0.0.0:8000/`
 | Function                                   | Request| Command                 |
 | ------------------------------------------ | -------| ------------------------|
 | `/api/`                                    |`GET`   | API root                |
-| `/api/customers`                           |`GET`   | List Customers          |
 | `/api/customers`                           |`GET`, `POST`   | List, Add a customer|
 | `/api/customers/<int:customer_id>/`         |`GET`, `PUT`, `PATCH`, `DELETE`| Get, Update, Partial Update, Delete a single Customer|
-| `/api/orders/`                             |`POST`  | Create Order            |
-| `/api/orders/<int:order_id>/`              |`PUT`, `PATCH`, `DELETE`| Update, Partial Update, Delete Order|
+| `/api/orders/`                             |`POST`, `GET`  | Create, List Order            |
+| `/api/orders/<int:order_id>/`              |`GET`, `PUT`, `PATCH`, `DELETE`| Get, Update, Partial Update, Delete Order|
 | `/api/orders/<int:order_id>/status`        |`GET`   | Get Order delivery status|
-| `/api/orders_read/`                        |`GET`   | List Orders             |
-| `/api/orders_read/?customer=<int:order_id>&order_status=<STATUS>`|`GET`   | Sort Orders|
-| `/api/orders_read/<int:order_id>/`             |`GET`   | Get Order by id|
+| `/api/orders-list/?customer=<int:order_id>&order_status=<STATUS>`|`GET`   | Sort Orders|
 
 <br>
 
