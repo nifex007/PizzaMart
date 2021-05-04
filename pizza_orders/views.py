@@ -26,7 +26,7 @@ class OrderReadOnlyViewSet(viewsets.ReadOnlyModelViewSet):
     pagination_class = Pagination
 
 
-class OrderViewSet(viewsets.ViewSet):
+class OrderViewSet(viewsets.ModelViewSet):
     """
     A viewset for creating, editing and deleting order instances.
     """
@@ -47,6 +47,12 @@ class OrderViewSet(viewsets.ViewSet):
                             status=status.HTTP_400_BAD_REQUEST)
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    def retrieve(self, request, pk=None):
+        queryset = Order.objects.all()
+        order = get_object_or_404(queryset, pk=pk)
+        serializer = self.serializer_class(order)
+        return Response(serializer.data)
 
     def update(self, request, pk=None):
         order = self.get_object(pk)
