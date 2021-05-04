@@ -12,6 +12,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from django.utils import timezone
 from pizza_mart.utils import Pagination
 from rest_framework.decorators import action
+from django.shortcuts import redirect
 
 
 # Create your views here.
@@ -108,3 +109,6 @@ class OrderViewSet(viewsets.ModelViewSet):
             "order_status": order.order_status,
         }
         return Response(order_status)
+
+    def list(self, request):
+        return redirect('/api/orders-list/')
