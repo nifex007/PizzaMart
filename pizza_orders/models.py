@@ -30,7 +30,10 @@ class Order(models.Model):
     delivery_date = models.DateTimeField(blank=True, null=True)
 
     def is_delivered(self):
-        return self.delivery_date is not None
+        return self.order_status == 'DELIVERED'
+
+    def is_in_transit(self):
+        return self.order_status == 'TRANSIT'
 
     def __str__(self):
         return '{} - {} - {}'.format(self.flavour, self.count, self.order_status)
