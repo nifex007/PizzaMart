@@ -46,15 +46,17 @@ class OrderViewSet(viewsets.ModelViewSet):
                 return Response({'message': 'sizes should be a list'},
                                 status=status.HTTP_400_BAD_REQUEST)
             response_data = []
+            # TODO: Move validations from viewsets to serializers
             for size_count in sizes:
+                flavour = size_count.get('flavour', None)
                 size = size_count.get('size', None)
                 count = size_count.get('count', None)
-                if size is None or count is None:
+                if size is None or count is None or flavour is None:
                     return Response({'message': 'No value for size or count'},
                                     status=status.HTTP_400_BAD_REQUEST)
                 data = {
                     "customer": order_payload['customer'],
-                    "flavour": order_payload['flavour'],
+                    "flavour": flavour,
                     "size": size,
                     "count": count
                 }
