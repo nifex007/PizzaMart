@@ -38,19 +38,21 @@ class TestOrderView(TestCase):
 
         self.sample_multiple_orders_payload = {
             "customer": self.customer.id,
-            "flavour": "MARGARITA",
             "sizes": [
                 {
                     "size": "SMALL",
-                    "count": 2
+                    "count": 2,
+                    "flavour": "MARGARITA"
                 },
                 {
                     "size": "LARGE",
-                    "count": 5
+                    "count": 5,
+                     "flavour": "SALAMI"
                 },
                 {
                     "size": "MEDIUM",
-                    "count": 1
+                    "count": 1,
+                     "flavour": "MARINARA"
                 }
             ]
         }
